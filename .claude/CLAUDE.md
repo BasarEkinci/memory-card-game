@@ -51,7 +51,7 @@ Contextual Unity knowledge auto-loaded by agents based on file patterns:
 | **Systems** (9) | urp-pipeline, addressables, cinemachine, animation, audio, physics, navmesh, ui-toolkit, shader-graph | No |
 | **Gameplay** (6) | character-controller, inventory-system, dialogue-system, save-system, state-machine, procedural-generation | No |
 | **Genre** (12) | hyper-casual, match3, idle-clicker, endless-runner, puzzle, rpg, platformer-2d, topdown, tower-defense, roguelike, card-game, racing | No |
-| **Third-Party** (5) | dotween, unitask, vcontainer, textmeshpro, odin-inspector | No |
+| **Third-Party** (6) | dotween, litmotion, unitask, vcontainer, textmeshpro, odin-inspector | No |
 | **Platform** (1) | mobile | No |
 | **Learned** (0-20) | Auto-extracted project-specific patterns via `/learn` | No |
 
