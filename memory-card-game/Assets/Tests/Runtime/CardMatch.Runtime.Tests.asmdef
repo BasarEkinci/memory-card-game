@@ -1,0 +1,21 @@
+{
+    "name": "CardMatch.Runtime.Tests",
+    "rootNamespace": "CardMatch.Runtime.Tests",
+    "references": [
+        "CardMatch.Runtime",
+        "CardMatch.Logic"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,20 @@
+{
+    "name": "CardMatch.Runtime",
+    "rootNamespace": "CardMatch.Runtime",
+    "references": [
+        "CardMatch.Logic",
+        "VContainer",
+        "MessagePipe",
+        "UniTask",
+        "LitMotion"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
