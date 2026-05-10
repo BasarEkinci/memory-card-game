@@ -1,82 +1,73 @@
-using MessagePipe;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using CardMatch.Logic.Messages;
+using MessagePipe;
 using CardMatch.Logic.Models;
 using CardMatch.Logic.Systems;
+using CardMatch.Logic.Messages;
 using CardMatch.Runtime.Views;
+using CardMatch.Runtime.ScriptableObjects;
+using CardMatch.Runtime.EntryPoints;
+using CardMatch.Runtime.Services;
+using CardMatch.Runtime.Coordinators;
 
-namespace CardMatch.Runtime.LifetimeScopes
+namespace CardMatch.Runtime
 {
     public sealed class GameLifetimeScope : LifetimeScope
     {
-        [SerializeField] private LifetimeScope _parentScope;
-
-        protected override LifetimeScope Parent => _parentScope;
+        [SerializeField] private GameConfig _gameConfig;
+        [SerializeField] private CardDefinitions _cardDefinitions;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            RegisterMessageBrokers(builder);
-            RegisterModels(builder);
-            RegisterSystems(builder);
-            RegisterViews(builder);
-        }
+            var rootScope = LifetimeScope.Find<RootLifetimeScope>();
+            builder.RegisterInstance(rootScope.Container.Resolve<SaveSystem>());
+            builder.RegisterInstance(rootScope.Container.Resolve<AudioSystem>());
+            builder.RegisterInstance(rootScope.Container.Resolve<AudioSettingsModel>());
 
-        private static void RegisterMessageBrokers(IContainerBuilder builder)
-        {
-            var options = builder.RegisterMessagePipe();
-            builder.RegisterMessageBroker<CardFlippedMessage>(options);
-            builder.RegisterMessageBroker<MatchResultMessage>(options);
-            builder.RegisterMessageBroker<PenaltyAppliedMessage>(options);
-            builder.RegisterMessageBroker<GamePhaseChangedMessage>(options);
-            builder.RegisterMessageBroker<GameWonMessage>(options);
-            builder.RegisterMessageBroker<SettingsChangedMessage>(options);
-            builder.RegisterMessageBroker<ResetRequestedMessage>(options);
-        }
+            builder.RegisterInstance(_gameConfig);
+            builder.RegisterInstance(_cardDefinitions);
 
-        private static void RegisterModels(IContainerBuilder builder)
-        {
+            var cards = new CardModel[_gameConfig.CardCount];
+            for (int cardIndex = 0; cardIndex < cards.Length; cardIndex++)
+            {
+                cards[cardIndex] = new CardModel { GridIndex = cardIndex };
+            }
+            builder.RegisterInstance(cards);
+
             builder.Register<GameStateModel>(Lifetime.Singleton);
             builder.Register<GridModel>(Lifetime.Singleton);
 
-            builder.Register<CardModel[]>(resolver =>
-            {
-                var cards = new CardModel[16];
-                for (int cardIndex = 0; cardIndex < 16; cardIndex++)
-                {
-                    cards[cardIndex] = new CardModel { GridIndex = cardIndex };
-                }
-                return cards;
-            }, Lifetime.Singleton);
-        }
+            builder.Register<CardSystem>(Lifetime.Singleton);
+            builder.Register<GridSystem>(Lifetime.Singleton);
+            builder.Register<MatchSystem>(Lifetime.Singleton);
+            builder.Register<GameFlowSystem>(Lifetime.Singleton);
 
-        private static void RegisterSystems(IContainerBuilder builder)
-        {
-            builder.Register<CardSystem>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
-            builder.Register<GridSystem>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
-            builder.Register<MatchSystem>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
-            builder.Register<GameFlowSystem>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
-        }
+            var messagePipeOptions = builder.RegisterMessagePipe();
+            builder.RegisterMessageBroker<CardFlippedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<MatchResultMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<PenaltyAppliedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<GamePhaseChangedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<GameWonMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<SettingsChangedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<ResetRequestedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<OpenSettingsRequestedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<CloseSettingsRequestedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<OpenResetConfirmRequestedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<ResetConfirmedMessage>(messagePipeOptions);
+            builder.RegisterMessageBroker<NewGameRequestedMessage>(messagePipeOptions);
 
-        private void RegisterViews(IContainerBuilder builder)
-        {
+            builder.RegisterComponentInHierarchy<HUDView>();
             builder.RegisterComponentInHierarchy<GridView>();
             builder.RegisterComponentInHierarchy<DeckView>();
-            builder.RegisterComponentInHierarchy<HUDView>();
+            builder.RegisterComponentInHierarchy<InputView>();
             builder.RegisterComponentInHierarchy<SettingsPanelView>();
             builder.RegisterComponentInHierarchy<WinPanelView>();
             builder.RegisterComponentInHierarchy<ResetConfirmPopupView>();
 
-            builder.RegisterBuildCallback(resolver =>
-            {
-                var gridView = resolver.Resolve<GridView>();
-                var cardViews = gridView.GetCardViews();
-                for (int cardIndex = 0; cardIndex < cardViews.Length; cardIndex++)
-                {
-                    resolver.InjectGameObject(cardViews[cardIndex].gameObject);
-                }
-            });
+            builder.RegisterEntryPoint<GameEntryPoint>();
+            builder.RegisterEntryPoint<GameCoordinator>();
+            builder.RegisterEntryPoint<AudioBridge>();
         }
     }
 }
