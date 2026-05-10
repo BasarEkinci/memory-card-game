@@ -8,7 +8,7 @@ You can play here: https://basarekinci.itch.io/memory-card-game
 
 ## About
 
-Card Match is a polished memory game where players flip cards to find matching pairs. The game emphasizes instant play with no menus, no ads, and no distractions.
+Card Match is a polished memory game where players flip cards to find matching pairs. 
 
 - **Strike System** — Consecutive matches multiply score (up to 43 points for a perfect game)
 - **Progressive Penalties** — 4th/6th/8th consecutive failures incur escalating point deductions
