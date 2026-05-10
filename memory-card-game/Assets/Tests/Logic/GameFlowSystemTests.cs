@@ -24,7 +24,7 @@ namespace CardMatch.Logic.Tests
             {
                 _cards[cardIndex] = new CardModel { GridIndex = cardIndex };
             }
-            _gridSystem = new GridSystem(_gridModel, _cards);
+            _gridSystem = new GridSystem(_gridModel, _cards, availableTypeCount: 8);
             _cardSystem = new CardSystem(_cards);
             _sut = new GameFlowSystem(_gameState, _gridSystem, _cardSystem);
         }

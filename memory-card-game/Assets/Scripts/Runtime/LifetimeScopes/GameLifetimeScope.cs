@@ -39,7 +39,7 @@ namespace CardMatch.Runtime
             builder.Register<GridModel>(Lifetime.Singleton);
 
             builder.Register<CardSystem>(Lifetime.Singleton);
-            builder.Register<GridSystem>(Lifetime.Singleton);
+            builder.Register<GridSystem>(Lifetime.Singleton).WithParameter("availableTypeCount", _cardDefinitions.FaceCount);
             builder.Register<MatchSystem>(Lifetime.Singleton);
             builder.Register<GameFlowSystem>(Lifetime.Singleton);
 

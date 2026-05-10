@@ -31,7 +31,7 @@ namespace CardMatch.Runtime.Tests
                 };
             }
             _cardSystem = new CardSystem(_cards);
-            _gridSystem = new GridSystem(_gridModel, _cards);
+            _gridSystem = new GridSystem(_gridModel, _cards, availableTypeCount: 8);
             _matchSystem = new MatchSystem(_cardSystem, _gameState);
             _gameFlowSystem = new GameFlowSystem(_gameState, _gridSystem, _cardSystem);
         }

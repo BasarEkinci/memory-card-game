@@ -7,6 +7,7 @@ namespace CardMatch.Logic.Tests
     [TestFixture]
     public sealed class GridSystemTests
     {
+        private const int DefaultAvailableTypes = 8;
         private GridModel _gridModel;
         private CardModel[] _cards;
         private GridSystem _sut;
@@ -20,7 +21,18 @@ namespace CardMatch.Logic.Tests
             {
                 _cards[cardIndex] = new CardModel { GridIndex = cardIndex };
             }
-            _sut = new GridSystem(_gridModel, _cards);
+            _sut = new GridSystem(_gridModel, _cards, DefaultAvailableTypes);
+        }
+
+        private GridSystem CreateSystemWithAvailableTypes(int availableTypes)
+        {
+            var gridModel = new GridModel();
+            var cards = new CardModel[16];
+            for (int cardIndex = 0; cardIndex < 16; cardIndex++)
+            {
+                cards[cardIndex] = new CardModel { GridIndex = cardIndex };
+            }
+            return new GridSystem(gridModel, cards, availableTypes);
         }
 
         [Test]
@@ -65,7 +77,7 @@ namespace CardMatch.Logic.Tests
             {
                 _cards[cardIndex] = new CardModel { GridIndex = cardIndex };
             }
-            _sut = new GridSystem(_gridModel, _cards);
+            _sut = new GridSystem(_gridModel, _cards, DefaultAvailableTypes);
 
             _sut.Shuffle(seed: 12345);
             int[] secondShuffle = _gridModel.CardTypeIds;
@@ -85,7 +97,7 @@ namespace CardMatch.Logic.Tests
             {
                 _cards[cardIndex] = new CardModel { GridIndex = cardIndex };
             }
-            _sut = new GridSystem(_gridModel, _cards);
+            _sut = new GridSystem(_gridModel, _cards, DefaultAvailableTypes);
 
             _sut.Shuffle(seed: 222);
             int[] shuffle2 = _gridModel.CardTypeIds;
@@ -138,6 +150,61 @@ namespace CardMatch.Logic.Tests
                 int actual = _sut.GetCardTypeAt(gridIndex);
                 Assert.That(actual, Is.EqualTo(expected), $"GetCardTypeAt({gridIndex}) should return correct type");
             }
+        }
+
+        [Test]
+        public void Shuffle_WithMoreAvailableTypes_SelectsRandomSubset()
+        {
+            const int availableTypes = 20;
+            var gridModel = new GridModel();
+            var cards = new CardModel[16];
+            for (int cardIndex = 0; cardIndex < 16; cardIndex++)
+            {
+                cards[cardIndex] = new CardModel { GridIndex = cardIndex };
+            }
+            var sut = new GridSystem(gridModel, cards, availableTypes);
+
+            sut.Shuffle(seed: 42);
+
+            var usedTypes = new System.Collections.Generic.HashSet<int>();
+            for (int cardIndex = 0; cardIndex < 16; cardIndex++)
+            {
+                usedTypes.Add(gridModel.CardTypeIds[cardIndex]);
+            }
+
+            Assert.That(usedTypes.Count, Is.EqualTo(8), "Should select exactly 8 unique types");
+            foreach (int typeId in usedTypes)
+            {
+                Assert.That(typeId, Is.InRange(0, availableTypes - 1), $"Type {typeId} should be within available range");
+            }
+        }
+
+        [Test]
+        public void Shuffle_DifferentSeeds_SelectDifferentTypes()
+        {
+            const int availableTypes = 54;
+            var gridModel1 = new GridModel();
+            var cards1 = new CardModel[16];
+            for (int i = 0; i < 16; i++) cards1[i] = new CardModel { GridIndex = i };
+            var sut1 = new GridSystem(gridModel1, cards1, availableTypes);
+
+            var gridModel2 = new GridModel();
+            var cards2 = new CardModel[16];
+            for (int i = 0; i < 16; i++) cards2[i] = new CardModel { GridIndex = i };
+            var sut2 = new GridSystem(gridModel2, cards2, availableTypes);
+
+            sut1.Shuffle(seed: 100);
+            sut2.Shuffle(seed: 200);
+
+            var types1 = new System.Collections.Generic.HashSet<int>();
+            var types2 = new System.Collections.Generic.HashSet<int>();
+            for (int i = 0; i < 16; i++)
+            {
+                types1.Add(gridModel1.CardTypeIds[i]);
+                types2.Add(gridModel2.CardTypeIds[i]);
+            }
+
+            Assert.That(types1.SetEquals(types2), Is.False, "Different seeds should select different card types");
         }
     }
 }
