@@ -5,8 +5,12 @@
         "CardMatch.Logic",
         "VContainer",
         "MessagePipe",
+        "MessagePipe.VContainer",
         "UniTask",
-        "LitMotion"
+        "LitMotion",
+        "LitMotion.Extensions",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

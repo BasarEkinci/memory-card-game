@@ -2,9 +2,13 @@
     "name": "CardMatch.Logic.Tests",
     "rootNamespace": "CardMatch.Logic.Tests",
     "references": [
-        "CardMatch.Logic"
+        "CardMatch.Logic",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
@@ -16,5 +20,5 @@
         "UNITY_INCLUDE_TESTS"
     ],
     "versionDefines": [],
-    "noEngineReferences": true
+    "noEngineReferences": false
 }

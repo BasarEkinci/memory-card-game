@@ -3,9 +3,14 @@
     "rootNamespace": "CardMatch.Runtime.Tests",
     "references": [
         "CardMatch.Runtime",
-        "CardMatch.Logic"
+        "CardMatch.Logic",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "UniTask"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
