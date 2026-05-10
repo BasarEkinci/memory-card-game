@@ -1,61 +1,53 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using LitMotion;
+using LitMotion.Extensions;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using VContainer;
 using CardMatch.Logic.Models;
-using CardMatch.Logic.Systems;
 using CardMatch.Runtime.ScriptableObjects;
 
 namespace CardMatch.Runtime.Views
 {
-    public sealed class CardView : MonoBehaviour, IPointerClickHandler
+    public sealed class CardView : MonoBehaviour
     {
-        [SerializeField] private Image _cardImage;
+        private const float FLIP_HALF_DURATION = 0.15f;
+        private const float MATCHED_ANIMATION_DURATION = 0.4f;
+        private const float SCALE_Z = 1f;
+        private const float HOVER_SCALE_MULTIPLIER = 1.1f;
+        private const float HOVER_DURATION = 0.15f;
+
+        [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private CardDefinitions _cardDefinitions;
 
         private CardModel _model;
-        private MatchSystem _matchSystem;
-        private int _gridIndex;
-        private CancellationTokenSource _cts;
-        private RectTransform _rectTransform;
+        private Transform _transform;
+        private float _originalScaleX;
+        private float _hoverScaleX;
+        private MotionHandle _hoverHandleX;
+        private MotionHandle _hoverHandleY;
 
-        [Inject]
-        public void Construct(MatchSystem matchSystem)
-        {
-            _matchSystem = matchSystem;
-        }
+        public int GridIndex { get; private set; }
 
         private void Awake()
         {
-            _rectTransform = GetComponent<RectTransform>();
-            _cts = new CancellationTokenSource();
+            _transform = transform;
+            _originalScaleX = _transform.localScale.x;
+            _hoverScaleX = _originalScaleX * HOVER_SCALE_MULTIPLIER;
         }
 
         public void Initialize(CardModel model, int gridIndex)
         {
             _model = model;
-            _gridIndex = gridIndex;
+            GridIndex = gridIndex;
             SetFaceDown();
-        }
-
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            if (_model == null || _matchSystem == null)
-            {
-                return;
-            }
-
-            _matchSystem.SelectCard(_gridIndex);
         }
 
         public async UniTask PlayFlipAnimation(CardState newState, CancellationToken token)
         {
-            await LMotion.Create(1f, 0f, 0.15f)
+            await LMotion.Create(_originalScaleX, 0f, FLIP_HALF_DURATION)
                 .WithEase(Ease.InQuad)
-                .BindToLocalScaleX(_rectTransform)
+                .BindToLocalScaleX(_transform)
                 .ToUniTask(token);
 
             if (newState == CardState.FaceUp)
@@ -67,51 +59,95 @@ namespace CardMatch.Runtime.Views
                 SetFaceDown();
             }
 
-            await LMotion.Create(0f, 1f, 0.15f)
+            await LMotion.Create(0f, _originalScaleX, FLIP_HALF_DURATION)
                 .WithEase(Ease.OutQuad)
-                .BindToLocalScaleX(_rectTransform)
+                .BindToLocalScaleX(_transform)
                 .ToUniTask(token);
         }
 
-        public async UniTask PlayMatchedAnimation(Vector2 targetPosition, CancellationToken token)
+        public async UniTask PlayMatchedAnimation(Vector3 targetPosition, CancellationToken token)
         {
-            Vector2 startPos = _rectTransform.anchoredPosition;
-
-            await LMotion.Create(startPos, targetPosition, 0.4f)
+            await LMotion.Create(_transform.position, targetPosition, MATCHED_ANIMATION_DURATION)
                 .WithEase(Ease.InBack)
-                .BindToAnchoredPosition(_rectTransform)
+                .BindToPosition(_transform)
                 .ToUniTask(token);
 
             gameObject.SetActive(false);
         }
 
+        public async UniTask PlayDealAnimation(Vector3 targetPosition, float duration, CancellationToken token)
+        {
+            await LMotion.Create(_transform.position, targetPosition, duration)
+                .WithEase(Ease.OutBack)
+                .BindToPosition(_transform)
+                .ToUniTask(token);
+        }
+
         public void SetCardFace(int typeId)
         {
-            if (_cardDefinitions != null)
+            if (_cardDefinitions != null && _spriteRenderer != null)
             {
-                _cardImage.sprite = _cardDefinitions.GetFaceSprite(typeId);
+                _spriteRenderer.sprite = _cardDefinitions.GetFaceSprite(typeId);
             }
         }
 
         public void SetFaceDown()
         {
-            if (_cardDefinitions != null)
+            if (_cardDefinitions != null && _spriteRenderer != null)
             {
-                _cardImage.sprite = _cardDefinitions.BackSprite;
+                _spriteRenderer.sprite = _cardDefinitions.BackSprite;
             }
         }
 
         public void ResetCard()
         {
             gameObject.SetActive(true);
-            _rectTransform.localScale = Vector3.one;
+            _transform.localScale = new Vector3(_originalScaleX, _originalScaleX, SCALE_Z);
             SetFaceDown();
+        }
+
+        public void SetPosition(Vector3 worldPosition)
+        {
+            _transform.position = worldPosition;
+        }
+
+        public void OnHoverEnter()
+        {
+            CancelHoverAnimations();
+            _hoverHandleX = LMotion.Create(_transform.localScale.x, _hoverScaleX, HOVER_DURATION)
+                .WithEase(Ease.OutQuad)
+                .BindToLocalScaleX(_transform);
+            _hoverHandleY = LMotion.Create(_transform.localScale.y, _hoverScaleX, HOVER_DURATION)
+                .WithEase(Ease.OutQuad)
+                .BindToLocalScaleY(_transform);
+        }
+
+        public void OnHoverExit()
+        {
+            CancelHoverAnimations();
+            _hoverHandleX = LMotion.Create(_transform.localScale.x, _originalScaleX, HOVER_DURATION)
+                .WithEase(Ease.OutQuad)
+                .BindToLocalScaleX(_transform);
+            _hoverHandleY = LMotion.Create(_transform.localScale.y, _originalScaleX, HOVER_DURATION)
+                .WithEase(Ease.OutQuad)
+                .BindToLocalScaleY(_transform);
+        }
+
+        private void CancelHoverAnimations()
+        {
+            if (_hoverHandleX.IsActive())
+            {
+                _hoverHandleX.Cancel();
+            }
+            if (_hoverHandleY.IsActive())
+            {
+                _hoverHandleY.Cancel();
+            }
         }
 
         private void OnDestroy()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
+            CancelHoverAnimations();
         }
     }
 }

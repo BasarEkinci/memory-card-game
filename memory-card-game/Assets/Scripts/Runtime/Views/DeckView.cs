@@ -1,49 +1,37 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using LitMotion;
+using LitMotion.Extensions;
 using UnityEngine;
 
 namespace CardMatch.Runtime.Views
 {
     public sealed class DeckView : MonoBehaviour
     {
-        [SerializeField] private RectTransform _deckTransform;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
 
-        private CancellationTokenSource _cts;
+        private Transform _transform;
 
         private void Awake()
         {
-            _cts = new CancellationTokenSource();
-            if (_deckTransform == null)
-                _deckTransform = GetComponent<RectTransform>();
+            _transform = transform;
         }
 
-        public Vector2 GetDeckPosition() => _deckTransform.anchoredPosition;
+        public Vector3 GetDeckPosition() => _transform.position;
 
         public async UniTask PlayShuffleAnimation(CancellationToken token)
         {
-            Vector2 originalPos = _deckTransform.anchoredPosition;
+            Debug.Log("[DeckView] PlayShuffleAnimation started");
 
-            await LMotion.Create(originalPos, originalPos + new Vector2(5f, 0f), 0.05f)
-                .WithEase(Ease.OutQuad)
-                .BindToAnchoredPosition(_deckTransform)
-                .ToUniTask(token);
+            if (_transform == null)
+            {
+                Debug.LogError("[DeckView] Transform is null!");
+                return;
+            }
 
-            await LMotion.Create(originalPos + new Vector2(5f, 0f), originalPos - new Vector2(5f, 0f), 0.1f)
-                .WithEase(Ease.InOutQuad)
-                .BindToAnchoredPosition(_deckTransform)
-                .ToUniTask(token);
+            await UniTask.Delay(100, cancellationToken: token);
 
-            await LMotion.Create(originalPos - new Vector2(5f, 0f), originalPos, 0.05f)
-                .WithEase(Ease.InQuad)
-                .BindToAnchoredPosition(_deckTransform)
-                .ToUniTask(token);
-        }
-
-        private void OnDestroy()
-        {
-            _cts?.Cancel();
-            _cts?.Dispose();
+            Debug.Log("[DeckView] PlayShuffleAnimation completed");
         }
     }
 }
