@@ -27,6 +27,7 @@ namespace CardMatch.Runtime.Services
             _bgmSource.Play();
         }
 
+        public void PlayDeal() => PlaySfx(_config.DealClip);
         public void PlayFlip() => PlaySfx(_config.FlipClip);
         public void PlayMatch() => PlaySfx(_config.MatchClip);
         public void PlayStrike() => PlaySfx(_config.StrikeClip);
@@ -57,7 +58,10 @@ namespace CardMatch.Runtime.Services
 
         public void Dispose()
         {
-            _bgmSource.Stop();
+            if (_bgmSource != null)
+            {
+                _bgmSource.Stop();
+            }
         }
     }
 }
