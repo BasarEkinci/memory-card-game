@@ -225,6 +225,22 @@ _controls.Player.Enable();
 
 Always disable the current map **before** enabling the next. Never leave multiple gameplay maps enabled simultaneously.
 
+## TextMeshPro
+
+Use `SetText()` instead of `.text` property for setting TMP text values:
+
+```csharp
+// BAD — direct property assignment
+_scoreText.text = score.ToString();
+_labelText.text = $"Score: {score}";
+
+// GOOD — use SetText method
+_scoreText.SetText("{0}", score);
+_labelText.SetText("Score: {0}", score);
+```
+
+**Why:** `SetText()` avoids string allocations by using internal StringBuilder and supports format arguments directly.
+
 ## .meta Files
 
 - NEVER edit manually
