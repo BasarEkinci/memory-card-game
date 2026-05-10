@@ -6,6 +6,7 @@ namespace CardMatch.Runtime.ScriptableObjects
     public sealed class AudioConfig : ScriptableObject
     {
         [SerializeField] private AudioClip _bgmClip;
+        [SerializeField] private AudioClip _dealClip;
         [SerializeField] private AudioClip _flipClip;
         [SerializeField] private AudioClip _matchClip;
         [SerializeField] private AudioClip _strikeClip;
@@ -13,6 +14,7 @@ namespace CardMatch.Runtime.ScriptableObjects
         [SerializeField] private AudioClip _winClip;
 
         public AudioClip BgmClip => _bgmClip;
+        public AudioClip DealClip => _dealClip;
         public AudioClip FlipClip => _flipClip;
         public AudioClip MatchClip => _matchClip;
         public AudioClip StrikeClip => _strikeClip;
