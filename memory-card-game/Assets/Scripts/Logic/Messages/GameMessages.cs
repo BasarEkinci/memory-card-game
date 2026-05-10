@@ -85,4 +85,24 @@ namespace CardMatch.Logic.Messages
     public readonly struct ResetRequestedMessage
     {
     }
+
+    public readonly struct OpenSettingsRequestedMessage
+    {
+    }
+
+    public readonly struct CloseSettingsRequestedMessage
+    {
+    }
+
+    public readonly struct OpenResetConfirmRequestedMessage
+    {
+    }
+
+    public readonly struct ResetConfirmedMessage
+    {
+    }
+
+    public readonly struct NewGameRequestedMessage
+    {
+    }
 }
