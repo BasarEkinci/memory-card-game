@@ -7,7 +7,8 @@ namespace CardMatch.Logic.Systems
     {
         Ignored,
         WaitingForSecond,
-        ReadyToEvaluate
+        ReadyToEvaluate,
+        Deselected
     }
 
     public readonly struct MatchEvaluationResult
@@ -61,6 +62,12 @@ namespace CardMatch.Logic.Systems
 
         public SelectionResult SelectCard(int cardIndex)
         {
+            if (_firstSelectedIndex.HasValue && _firstSelectedIndex.Value == cardIndex)
+            {
+                CancelSelection();
+                return SelectionResult.Deselected;
+            }
+
             CardModel card = _cardSystem.GetCard(cardIndex);
 
             if (card == null || card.State != CardState.FaceDown)

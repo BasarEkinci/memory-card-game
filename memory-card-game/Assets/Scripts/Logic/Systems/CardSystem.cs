@@ -67,6 +67,17 @@ namespace CardMatch.Logic.Systems
             }
         }
 
+        public void DealAllCards()
+        {
+            for (int cardIndex = 0; cardIndex < _cards.Length; cardIndex++)
+            {
+                if (_cards[cardIndex].State == CardState.InDeck)
+                {
+                    _cards[cardIndex].State = CardState.FaceDown;
+                }
+            }
+        }
+
         public CardModel GetCard(int index)
         {
             if (index < 0 || index >= _cards.Length)
