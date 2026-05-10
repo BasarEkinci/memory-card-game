@@ -3,7 +3,11 @@
     "allow": [
       "mcp__UnityMCP__manage_scene",
       "mcp__UnityMCP__read_console",
-      "Bash(Move-Item *)"
+      "Bash(Move-Item *)",
+      "Bash(git stash *)",
+      "Bash(git worktree *)",
+      "WebFetch(domain:github.com)",
+      "Bash(git check-ignore *)"
     ]
   }
 }
