@@ -4,6 +4,8 @@ A classic memory/concentration card matching game built with Unity 6. Features a
 
 **8 phases, 63 tasks, 72 passing tests (100% code pipeline)**
 
+You can play here: https://basarekinci.itch.io/memory-card-game
+
 ---
 
 ## About
