@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95d25c0fd145ac144bba6f7a8c7f0a1c, type: 3}
+  m_Name: AudioConfig
+  m_EditorClassIdentifier: CardMatch.Runtime::CardMatch.Runtime.ScriptableObjects.AudioConfig
+  _bgmClip: {fileID: 8300000, guid: 2ded6a6b221bf164cb0fc978febd76b4, type: 3}
+  _dealClip: {fileID: 8300000, guid: ef2e51ad574d05c46a787b15753b1452, type: 3}
+  _flipClip: {fileID: 8300000, guid: 5cf0074e7aaeaa54aa3c32c2d6fb716d, type: 3}
+  _matchClip: {fileID: 8300000, guid: c144565b12816be478f129a32a7aae00, type: 3}
+  _strikeClip: {fileID: 8300000, guid: 56bacfeb9041ad446b5dd0dea8bb58cb, type: 3}
+  _penaltyClip: {fileID: 8300000, guid: 49cb094717547784ca024a9ebcba1050, type: 3}
+  _winClip: {fileID: 8300000, guid: 689cfb408fadf484bb7adafb47fff0f4, type: 3}
