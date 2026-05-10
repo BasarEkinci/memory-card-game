@@ -2,8 +2,6 @@
 
 A classic memory/concentration card matching game built with Unity 6. Features a strike bonus system for consecutive matches and penalties for repeated failures, creating a satisfying risk/reward dynamic.
 
-**8 phases, 63 tasks, 72 passing tests (100% code pipeline)**
-
 You can play here: https://basarekinci.itch.io/memory-card-game
 
 ---
