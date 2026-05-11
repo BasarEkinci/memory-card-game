@@ -1,5 +1,7 @@
 # Card Match
 
+> *This repo is a case study in AI-orchestrated game development. The game itself is the artifact; the interesting work is the 8-phase pipeline, agent coordination rules, and quality gates that produced it.*
+
 A classic memory/concentration card matching game built with Unity 6. Features a strike bonus system for consecutive matches and penalties for repeated failures, creating a satisfying risk/reward dynamic.
 
 You can play here: https://basarekinci.itch.io/memory-card-game
